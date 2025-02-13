@@ -46,6 +46,12 @@ button {
     margin: 5px;
 }
 
+textarea {
+    margin-left: 90px;
+    width: 188px;
+    height: 75px;
+}
+
 button {
     background-color: #007bff;
     color: white;
