@@ -67,10 +67,10 @@ document.addEventListener("DOMContentLoaded", function() {
             // Update button appearance based on whether it was liked before
             if (likedQuotes[currentQuote]) {
                 likeButton.classList.add("liked");
-                likeButton.innerHTML = `❤️ Like (${likeCounts[currentQuote] || 0})`;
+                likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
             } else {
                 likeButton.classList.remove("liked");
-                likeButton.innerHTML = `🤍 Like (${likeCounts[currentQuote] || 0})`;
+                likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
             }
 
             speechBubble.classList.remove("hide"); // Transition back in
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function likeQuote() {
-        if (!likeCounts[currentQuote] === undefined) {
+        if (!likeCounts[currentQuote]) {
             likeCounts[currentQuote] = 0; // Initialize if not liked before
         }
 
@@ -112,4 +112,3 @@ document.addEventListener("DOMContentLoaded", function() {
     // Like/unlike quote when button is clicked
     likeButton.addEventListener("click", likeQuote);
 });
-
