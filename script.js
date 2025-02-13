@@ -10,8 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     document.body.classList.add("loaded");
 
-    //form validation
-
+    // Form validation
     const form = document.querySelector("form");
     if(form) {
         form.addEventListener("submit", function(event) {
@@ -32,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
             if (errorMessage) {
                 event.preventDefault(); // Stop form submission
-                alert(errorMessage); // show error message
+                alert(errorMessage); // Show error message
             }
         });
     }
@@ -41,8 +40,8 @@ document.addEventListener("DOMContentLoaded", function() {
         "Believe you can and you're halfway there.",
         "The only limit to our realization of tomorrow is our doubts of today.",
         "Your time is limited, so don't waste it living someone else's life.",
-        "The future belongs to those who belive in the beauty of their dreams.",
-        "Don't watch the Clock; do what it does. Keep going."
+        "The future belongs to those who believe in the beauty of their dreams.",
+        "Don't watch the clock; do what it does. Keep going."
     ];
 
     const quoteText = document.getElementById("quote");
@@ -51,9 +50,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const likeCountDisplay = document.getElementById("like-count");
     const speechBubble = document.querySelector(".speech-bubble");
 
-    let currentQuote = ""; // Stores the currently displayed quote
-    let likeCounts = JSON.parse(localStorage.getItem("likeCounts")) || {}; // Stores like counts
-    let likedQuotes = JSON.parse(localStorage.getItem("likedQuotes")) || {}; // Tracks liked quotes
+    let currentQuote = ""; // Store current quote
+    let likeCounts = JSON.parse(localStorage.getItem("likeCounts")) || {}; // Load likes
+    let likedQuotes = JSON.parse(localStorage.getItem("likedQuotes")) || {}; // Track liked quotes
 
     function generateQuote() {
         speechBubble.classList.add("hide"); // Start transition out
@@ -62,22 +61,19 @@ document.addEventListener("DOMContentLoaded", function() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             currentQuote = quotes[randomIndex]; // Update the current quote
             quoteText.textContent = currentQuote;
-
-            // Ensure like count is always a number (default to 0 if not set)
-            const currentLikes = likeCounts[currentQuote] || 0;
-            likeCountDisplay.textContent = currentLikes;
-
-            // Update like button appearance
+            likeCountDisplay.textContent = likeCounts[currentQuote]; // ❌ This caused "undefined" to appear
+            
+            // Update button appearance based on whether it was liked before
             if (likedQuotes[currentQuote]) {
                 likeButton.classList.add("liked");
-                likeButton.innerHTML = ❤️ Like (${currentLikes});
+                likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
             } else {
                 likeButton.classList.remove("liked");
-                likeButton.innerHTML = 🤍 Like (${currentLikes});
+                likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
             }
 
             speechBubble.classList.remove("hide"); // Transition back in
-        }, 400);
+        }, 400); // Wait for animation to finish before changing text
     }
 
     function likeQuote() {
@@ -90,32 +86,20 @@ document.addEventListener("DOMContentLoaded", function() {
             likeCounts[currentQuote]--; // Decrease like count
             delete likedQuotes[currentQuote]; // Remove from liked list
             likeButton.classList.remove("liked");
+            likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
         } else {
             likeCounts[currentQuote]++; // Increase like count
             likedQuotes[currentQuote] = true; // Mark as liked
             likeButton.classList.add("liked");
+            likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
         }
-
-        // Ensure like count is always a number
-        const currentLikes = likeCounts[currentQuote] || 0;
-        likeButton.innerHTML = likedQuotes[currentQuote] ? ❤️ Like (${currentLikes}) : 🤍 Like (${currentLikes});
-        likeCountDisplay.textContent = currentLikes;
 
         // Save updated data
         localStorage.setItem("likeCounts", JSON.stringify(likeCounts));
         localStorage.setItem("likedQuotes", JSON.stringify(likedQuotes));
-    }
 
-    // Dark Mode Toggle
-    const darkModeToggle = document.getElementById("dark-mode-toggle");
-    darkModeToggle.addEventListener("click", function () {
-        document.body.classList.toggle("dark-mode");
-        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
-    });
-
-    // Load dark mode preference from localStorage
-    if (localStorage.getItem("darkMode") === "true") {
-        document.body.classList.add("dark-mode");
+        // Update count display
+        likeCountDisplay.textContent = likeCounts[currentQuote];
     }
 
     // Load a quote immediately when the page loads
