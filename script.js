@@ -51,9 +51,9 @@ document.addEventListener("DOMContentLoaded", function() {
     const likeCountDisplay = document.getElementById("like-count");
     const speechBubble = document.querySelector(".speech-bubble");
 
-    let currentQuote = ""; // Store current quote
-    let likeCounts = JSON.parse(localStorage.getItem("likeCounts")) || {}; // Load likes
-    let likedQuotes = JSON.parse(localStorage.getItem("likedQuotes")) || {}; // Track liked quotes
+    let currentQuote = ""; // Stores the currently displayed quote
+    let likeCounts = JSON.parse(localStorage.getItem("likeCounts")) || {}; // Stores like counts
+    let likedQuotes = JSON.parse(localStorage.getItem("likedQuotes")) || {}; // Tracks liked quotes
 
     function generateQuote() {
         speechBubble.classList.add("hide"); // Start transition out
@@ -62,19 +62,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const randomIndex = Math.floor(Math.random() * quotes.length);
             currentQuote = quotes[randomIndex]; // Update the current quote
             quoteText.textContent = currentQuote;
-            likeCountDisplay.textContent = likeCounts[currentQuote] || 0; // Show stored likes
-            
-            // Update button appearance based on whether it was liked before
+
+            // Ensure like count is always a number (default to 0 if not set)
+            const currentLikes = likeCounts[currentQuote] || 0;
+            likeCountDisplay.textContent = currentLikes;
+
+            // Update like button appearance
             if (likedQuotes[currentQuote]) {
                 likeButton.classList.add("liked");
-                likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
+                likeButton.innerHTML = ❤️ Like (${currentLikes});
             } else {
                 likeButton.classList.remove("liked");
-                likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
+                likeButton.innerHTML = 🤍 Like (${currentLikes});
             }
 
             speechBubble.classList.remove("hide"); // Transition back in
-        }, 400); // Wait for animation to finish before changing text
+        }, 400);
     }
 
     function likeQuote() {
@@ -87,20 +90,32 @@ document.addEventListener("DOMContentLoaded", function() {
             likeCounts[currentQuote]--; // Decrease like count
             delete likedQuotes[currentQuote]; // Remove from liked list
             likeButton.classList.remove("liked");
-            likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
         } else {
             likeCounts[currentQuote]++; // Increase like count
             likedQuotes[currentQuote] = true; // Mark as liked
             likeButton.classList.add("liked");
-            likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
         }
+
+        // Ensure like count is always a number
+        const currentLikes = likeCounts[currentQuote] || 0;
+        likeButton.innerHTML = likedQuotes[currentQuote] ? ❤️ Like (${currentLikes}) : 🤍 Like (${currentLikes});
+        likeCountDisplay.textContent = currentLikes;
 
         // Save updated data
         localStorage.setItem("likeCounts", JSON.stringify(likeCounts));
         localStorage.setItem("likedQuotes", JSON.stringify(likedQuotes));
+    }
 
-        // Update count display
-        likeCountDisplay.textContent = likeCounts[currentQuote];
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById("dark-mode-toggle");
+    darkModeToggle.addEventListener("click", function () {
+        document.body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", document.body.classList.contains("dark-mode"));
+    });
+
+    // Load dark mode preference from localStorage
+    if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
     }
 
     // Load a quote immediately when the page loads
