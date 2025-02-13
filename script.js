@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Form validation
     const form = document.querySelector("form");
-    if(form) {
+    if (form) {
         form.addEventListener("submit", function(event) {
             const name = document.getElementById("name").value.trim();
             const email = document.getElementById("email").value.trim();
@@ -46,60 +46,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     const quoteText = document.getElementById("quote");
     const quoteButton = document.getElementById("new-quote");
-    const likeButton = document.getElementById("like-quote");
-    const likeCountDisplay = document.getElementById("like-count");
     const speechBubble = document.querySelector(".speech-bubble");
-
-    let currentQuote = ""; // Store current quote
-    let likeCounts = JSON.parse(localStorage.getItem("likeCounts")) || {}; // Load likes
-    let likedQuotes = JSON.parse(localStorage.getItem("likedQuotes")) || {}; // Track liked quotes
 
     function generateQuote() {
         speechBubble.classList.add("hide"); // Start transition out
 
         setTimeout(() => {
             const randomIndex = Math.floor(Math.random() * quotes.length);
-            currentQuote = quotes[randomIndex]; // Update the current quote
-            quoteText.textContent = currentQuote;
-            likeCountDisplay.textContent = likeCounts[currentQuote]; // ❌ This caused "undefined" to appear
-            
-            // Update button appearance based on whether it was liked before
-            if (likedQuotes[currentQuote]) {
-                likeButton.classList.add("liked");
-                likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
-            } else {
-                likeButton.classList.remove("liked");
-                likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
-            }
-
+            quoteText.textContent = quotes[randomIndex]; // Display new quote
             speechBubble.classList.remove("hide"); // Transition back in
         }, 400); // Wait for animation to finish before changing text
-    }
-
-    function likeQuote() {
-        if (!likeCounts[currentQuote]) {
-            likeCounts[currentQuote] = 0; // Initialize if not liked before
-        }
-
-        // Toggle like state
-        if (likedQuotes[currentQuote]) {
-            likeCounts[currentQuote]--; // Decrease like count
-            delete likedQuotes[currentQuote]; // Remove from liked list
-            likeButton.classList.remove("liked");
-            likeButton.innerHTML = "🤍 Like (" + likeCounts[currentQuote] + ")";
-        } else {
-            likeCounts[currentQuote]++; // Increase like count
-            likedQuotes[currentQuote] = true; // Mark as liked
-            likeButton.classList.add("liked");
-            likeButton.innerHTML = "❤️ Like (" + likeCounts[currentQuote] + ")";
-        }
-
-        // Save updated data
-        localStorage.setItem("likeCounts", JSON.stringify(likeCounts));
-        localStorage.setItem("likedQuotes", JSON.stringify(likedQuotes));
-
-        // Update count display
-        likeCountDisplay.textContent = likeCounts[currentQuote];
     }
 
     // Load a quote immediately when the page loads
@@ -107,7 +63,4 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Change quote when the button is clicked
     quoteButton.addEventListener("click", generateQuote);
-
-    // Like/unlike quote when button is clicked
-    likeButton.addEventListener("click", likeQuote);
 });
